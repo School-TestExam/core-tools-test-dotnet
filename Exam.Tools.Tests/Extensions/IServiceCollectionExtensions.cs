@@ -1,5 +1,4 @@
 ﻿using Exam.Tools.Tests.Containers;
-using FluentAssertions.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
@@ -16,11 +15,11 @@ public static class IServiceCollectionExtensions
             services.Remove(descriptor);
         }
     }
-
+    
     public static void EnsureDbCreated<T>(this IServiceCollection services) where T : DbContext
     {
         var provider = services.BuildServiceProvider();
-
+    
         using var scope = provider.CreateScope();
         var scopedServices = scope.ServiceProvider;
         var context =  scopedServices.GetRequiredService<T>();
@@ -30,7 +29,7 @@ public static class IServiceCollectionExtensions
     public static IServiceCollection AddTestMySqlContext<TContext>(this IServiceCollection services) where TContext : DbContext
     {
         services.RemoveDbContext<TContext>();
-
+    
         services.AddDbContext<TContext>(delegate (DbContextOptionsBuilder options)
         {
             options.UseMySql(MySQLContainerFixture.ConnectionString, new MySqlServerVersion("8.0.26"), options =>
@@ -38,10 +37,10 @@ public static class IServiceCollectionExtensions
                 options.EnableRetryOnFailure();
                 options.UseMicrosoftJson();
             });
-
+    
             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
-
+    
         services.EnsureDbCreated<TContext>();
         return services;
     }
