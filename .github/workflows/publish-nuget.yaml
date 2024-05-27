@@ -1,0 +1,14 @@
+name: Publish nuget package to git
+on:
+    push:
+      branches: main
+    pull_request:
+      branches: main
+      
+concurrency:
+    group: ci-${{ github.ref }}
+    cancel-in-progress: true
+jobs:
+    build:
+        uses: School-TestExam/core-pipelines/.github/workflows/nuget-publish.yaml@main
+        secrets: inherit
